@@ -1,14 +1,16 @@
-const Thing = require("../models/thing");
+const Sauce = require("../models/Sauce");
 
-exports.createThing = (req, res, next) => {
-  const thing = new Thing({
+const jwt = require("jsonwebtoken");
+
+exports.createSauce = (req, res, next) => {
+  const sauce = new Sauce({
     title: req.body.title,
     description: req.body.description,
     imageUrl: req.body.imageUrl,
     price: req.body.price,
     userId: req.body.userId,
   });
-  thing
+  sauce
     .save()
     .then(() => {
       res.status(201).json({
@@ -22,12 +24,12 @@ exports.createThing = (req, res, next) => {
     });
 };
 
-exports.getOneThing = (req, res, next) => {
-  Thing.findOne({
+exports.getOneSauce = (req, res, next) => {
+  Sauce.findOne({
     _id: req.params.id,
   })
-    .then((thing) => {
-      res.status(200).json(thing);
+    .then((sauce) => {
+      res.status(200).json(sauce);
     })
     .catch((error) => {
       res.status(404).json({
@@ -36,8 +38,8 @@ exports.getOneThing = (req, res, next) => {
     });
 };
 
-exports.modifyThing = (req, res, next) => {
-  const thing = new Thing({
+exports.modifySauce = (req, res, next) => {
+  const sauce = new Sauce({
     _id: req.params.id,
     title: req.body.title,
     description: req.body.description,
@@ -45,10 +47,10 @@ exports.modifyThing = (req, res, next) => {
     price: req.body.price,
     userId: req.body.userId,
   });
-  Thing.updateOne({ _id: req.params.id }, thing)
+  Sauce.updateOne({ _id: req.params.id }, sauce)
     .then(() => {
       res.status(201).json({
-        message: "Thing updated successfully!",
+        message: "Sauce updated successfully!",
       });
     })
     .catch((error) => {
@@ -58,8 +60,8 @@ exports.modifyThing = (req, res, next) => {
     });
 };
 
-exports.deleteThing = (req, res, next) => {
-  Thing.deleteOne({ _id: req.params.id })
+exports.deleteSauce = (req, res, next) => {
+  Sauce.deleteOne({ _id: req.params.id })
     .then(() => {
       res.status(200).json({
         message: "Deleted!",
@@ -72,10 +74,10 @@ exports.deleteThing = (req, res, next) => {
     });
 };
 
-exports.getAllStuff = (req, res, next) => {
-  Thing.find()
-    .then((things) => {
-      res.status(200).json(things);
+exports.getAllSauces = (req, res, next) => {
+  Sauce.find()
+    .then((sauces) => {
+      res.status(200).json(sauces);
     })
     .catch((error) => {
       res.status(400).json({
