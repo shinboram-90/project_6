@@ -1,8 +1,8 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-const stuffRoutes = require("./routes/stuff");
+const userRoutes = require("./routes/user");
 
 mongoose
   .connect(
@@ -31,6 +31,6 @@ app.use((req, res, next) => {
 // utiliser express.json();
 
 //
-app.use("/api/stuff, stuffRoutes");
+app.use("/api/auth", userRoutes);
 
 module.exports = app;
