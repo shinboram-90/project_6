@@ -10,13 +10,14 @@ exports.signup = (req, res, next) => {
         email: req.body.email,
         password: hash,
       });
+
       // enregistre l'utilisateur dans la BDD
       user
         .save()
         .then(() => res.status(201).json({ message: "Utilisateur créé !" }))
         .catch((error) => res.status(400).json({ error }));
     })
-    .catch((error) => res.status(500).json({ error }));
+    .catch((error) => res.status(400).json({ error }));
 };
 
 exports.login = (req, res, next) => {
