@@ -1,4 +1,6 @@
 const Sauce = require("../models/Sauce");
+
+// Avoir acces aux differentes operations liees au systeme de fichiers
 const fs = require("fs");
 
 //  CREATE ONE SAUCE
@@ -16,7 +18,7 @@ exports.createSauce = (req, res, next) => {
     .save()
     .then(() => {
       res.status(201).json({
-        message: "Sauce saved successfully!",
+        message: "Sauce enregistrée avec succès !",
       });
     })
     .catch((error) => {
@@ -73,7 +75,7 @@ exports.modifySauce = (req, res, next) => {
   )
     .then(() => {
       res.status(201).json({
-        message: "Sauce updated successfully!",
+        message: "Sauce modifiée avec succès !",
       });
     })
     .catch((error) => {
@@ -84,26 +86,16 @@ exports.modifySauce = (req, res, next) => {
 };
 
 // DELETE ONE SAUCE
+// Avant la suppression, acceder au fichier pour pouvoir suppr l'image de la base
 exports.deleteSauce = (req, res, next) => {
-  Sauce.findOne({ _id: req.params.id }).then((sauce) => {
-    if (!sauce) {
-      res.status(404).json({ error: new Error("Cannot find the sauce") });
-    }
-    if (sauce.userId !== req.auth.userId) {
-      res.status(400).json({
-        error: new Error("Unauthorized request !"),
+  Sauce.findOne({ _id: req.params.id })
+    .then((sauce) => {
+      const filename = sauce.imageUrl.split("/images/")[1];
+      fs.unlink(`images/${filename}`, () => {
+        Sauce.deleteOne({ _id: req.params.id })
+          .then(() => res.status(200).json({ message: "Sauce supprimée !" }))
+          .catch((error) => res.status(400).json({ error }));
       });
-    }
-    Sauce.deleteOne({ _id: req.params.id })
-      .then(() => {
-        res.status(200).json({
-          message: "Deleted!",
-        });
-      })
-      .catch((error) => {
-        res.status(400).json({
-          error: error,
-        });
-      });
-  });
+    })
+    .catch((error) => res.status(500).json({ error }));
 };
