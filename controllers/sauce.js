@@ -2,10 +2,15 @@ const Sauce = require("../models/Sauce");
 const fs = require("fs");
 
 //  CREATE ONE SAUCE
+// Pour ajouter un fichier a la req, le front doit envoyer les donnees sous forme de data et non sous la forme JSON
 exports.createSauce = (req, res, next) => {
-  delete req.body._id;
-  const Sauce = new Sauce({
-    ...req.body,
+  const sauceObject = JSON.parse(req.body.sauce);
+  delete sauceObject._id;
+  const sauce = new Sauce({
+    ...sauceObject,
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${
+      req.file.filename
+    }`,
   });
   sauce
     .save()
@@ -51,10 +56,18 @@ exports.getOneSauce = (req, res, next) => {
 
 // UPDATE ONE SAUCE
 exports.modifySauce = (req, res, next) => {
+  const sauceObject = req.file
+    ? {
+        ...JSON.parse(req.body.sauce),
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`,
+      }
+    : { ...req.body };
   Sauce.updateOne(
     { _id: req.params.id },
     {
-      ...req.body,
+      ...sauceObject,
       _id: req.params.id,
     }
   )
@@ -72,15 +85,25 @@ exports.modifySauce = (req, res, next) => {
 
 // DELETE ONE SAUCE
 exports.deleteSauce = (req, res, next) => {
-  Sauce.deleteOne({ _id: req.params.id })
-    .then(() => {
-      res.status(200).json({
-        message: "Deleted!",
-      });
-    })
-    .catch((error) => {
+  Sauce.findOne({ _id: req.params.id }).then((sauce) => {
+    if (!sauce) {
+      res.status(404).json({ error: new Error("Cannot find the sauce") });
+    }
+    if (sauce.userId !== req.auth.userId) {
       res.status(400).json({
-        error: error,
+        error: new Error("Unauthorized request !"),
       });
-    });
+    }
+    Sauce.deleteOne({ _id: req.params.id })
+      .then(() => {
+        res.status(200).json({
+          message: "Deleted!",
+        });
+      })
+      .catch((error) => {
+        res.status(400).json({
+          error: error,
+        });
+      });
+  });
 };
