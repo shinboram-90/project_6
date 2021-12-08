@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+const helmet = require("helmet");
 // const morgan = require("morgan");
 require("dotenv").config();
 
@@ -8,6 +9,8 @@ const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
 
 const app = express();
+
+app.use(helmet());
 
 mongoose
   .connect(
