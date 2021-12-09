@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const helmet = require("helmet");
-// const morgan = require("morgan");
+const morgan = require("morgan");
 require("dotenv").config();
 
 const sauceRoutes = require("./routes/sauce");
@@ -40,6 +40,6 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);
 
-// app.use(morgan("tiny"));
+app.use(morgan("tiny"));
 
 module.exports = app;
