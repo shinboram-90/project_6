@@ -116,3 +116,77 @@ exports.deleteSauce = (req, res, next) => {
     })
     .catch((error) => res.status(500).json({ error }));
 };
+
+// GIVE LIKES AND DISLIKES
+exports.likeSauce = (req, res, next) => {
+  const userId = req.body.userId;
+  const like = req.body.like;
+
+  Sauce.findOne({ _id: req.params.id })
+    .then((sauce) => {
+      const userLike = sauce.usersLiked.includes(userId);
+      const userDislike = sauce.usersDisliked.includes(userId);
+
+      switch (like) {
+        // L'utilisateur annule son like ou son dislike
+        case 0:
+          if (userLike) {
+            sauce.likes -= 1;
+            sauce.usersLiked = sauce.usersLiked.splice(userId, 1);
+          } else if (userDislike) {
+            sauce.dislikes -= 1;
+            sauce.usersDisliked = sauce.usersDisliked.splice(userId, 1);
+          }
+          console.log(sauce.liked);
+          console.log(sauce.usersDisliked);
+          break;
+
+        // L'utilisateur aime
+        case 1:
+          if (userLike) {
+            error = "You already liked this sauce!";
+          }
+          if (userDislike) {
+            error = "Cancel your dislike first and click on like again";
+          }
+          if (!userLike && !userDislike) {
+            sauce.likes += 1;
+            sauce.usersLiked.push(userId);
+          }
+          console.log({ userLike });
+          console.log({ userDislike });
+
+          break;
+
+        // L'utilisateur n'aime pas
+        case -1:
+          if (!userDislike && !userLike) {
+            sauce.dislikes += 1;
+            sauce.usersDisliked.push(userId);
+          }
+          if (userDislike) {
+            error = "You already disliked this sauce!";
+          }
+          if (userLike) {
+            error = "Cancel your like first and hit the dislike button again";
+          }
+          console.log({ userLike });
+          console.log({ userDislike });
+
+          break;
+
+        default:
+          return res.status(400).json({ message: "Error, invalid request" });
+      }
+
+      sauce
+        .save()
+        .then(() =>
+          res.status(201).json({ message: "Likes updated successfully" })
+        )
+        .catch((error) => {
+          res.status(400).json({ error: error });
+        });
+    })
+    .catch((error) => res.status(500).json({ error: error.message }));
+};
