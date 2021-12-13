@@ -121,6 +121,7 @@ exports.deleteSauce = (req, res, next) => {
 exports.likeSauce = (req, res, next) => {
   const userId = req.body.userId;
   const like = req.body.like;
+  console.log({ like });
 
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
@@ -132,10 +133,12 @@ exports.likeSauce = (req, res, next) => {
         case 0:
           if (userLike) {
             sauce.likes -= 1;
-            sauce.usersLiked = sauce.usersLiked.splice(userId, 1);
+            sauce.usersLiked = sauce.usersLiked.filter((id) => id != userId);
           } else if (userDislike) {
             sauce.dislikes -= 1;
-            sauce.usersDisliked = sauce.usersDisliked.splice(userId, 1);
+            sauce.usersDisliked = sauce.usersDisliked.filter(
+              (id) => id != userId
+            );
           }
           console.log(sauce.liked);
           console.log(sauce.usersDisliked);
