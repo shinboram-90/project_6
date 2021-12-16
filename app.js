@@ -4,11 +4,13 @@ const path = require("path");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
+const mongoSanitize = require("express-mongo-sanitize");
 require("dotenv").config();
 
 const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
 
+// Robot tente le login en masse, au bout de 100 fois doit attendre
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -46,8 +48,12 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);
 
+// Renvoit les requetes dans la console
 app.use(morgan("tiny"));
 
 app.use(limiter);
+
+// Tous les caracteres interdits sont remplaces par ce qu'il y a entre ""
+app.use(mongoSanitize({ replaceWith: "_" }));
 
 module.exports = app;
