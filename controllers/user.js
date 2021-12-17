@@ -11,9 +11,9 @@ schemaPV
   .is()
   .max(35)
   .has()
-  .uppercase() //doit avoir une majuscule
+  .uppercase()
   .has()
-  .lowercase() //doit avoir des minuscules
+  .lowercase()
   .has()
   .digits(2) //doit avoir au moins 2 chiffres
   .has()
@@ -23,7 +23,7 @@ schemaPV
   .not()
   .oneOf(["Passw0rd", "Password123", "test"]);
 
-//la fonction sign up crypte le mot de passe, et va prendre ce mdp et créer un new user
+// La fonction sign up crypte le mot de passe, et va prendre ce mdp et créer un new user
 exports.signup = (req, res, next) => {
   if (schemaPV.validate(req.body.password)) {
     bcrypt

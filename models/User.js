@@ -10,5 +10,5 @@ const userSchema = mongoose.Schema({
 userSchema.plugin(uniqueValidator);
 userSchema.plugin(MongooseErrors);
 
-//fct model de mongoose
+// Fct model de mongoose
 module.exports = mongoose.model("User", userSchema);
