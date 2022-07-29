@@ -16,7 +16,7 @@
     "express-rate-limit": "^5.5.1",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.0.13",
+    "mongoose": "^6.4.6",
     "mongoose-errors": "^1.1.2",
     "mongoose-unique-validator": "^3.0.0",
     "morgan": "^1.10.0",
